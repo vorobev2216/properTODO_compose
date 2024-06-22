@@ -11,8 +11,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -39,6 +41,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.serialization.Serializable
 
 
 @Composable
@@ -47,31 +50,42 @@ fun ToDoPage(toDoViewModel: ToDoViewModel) {
     var inputText by remember {
         mutableStateOf("")
     }
-    Column(modifier = Modifier.padding(top = 30.dp)) {
+    Column() {
         Text(
             text = "Делай",
-            modifier = Modifier.padding(start = 10.dp),
-            //fontFamily = FontFamily(Font(R.font.metropolissemibold)),
-            fontSize = 25.sp
+            modifier = Modifier
+                .padding(start = 10.dp)
+                .padding(top = 60.dp, bottom = 15.dp, start = 10.dp),
+            fontFamily = FontFamily(Font(R.font.metropolissemibold)),
+            fontSize = 35.sp
         )
-        Row(){
-            OutlinedTextField(value = inputText, onValueChange ={
-                inputText = it
-            } )
-            Button(onClick = { toDoViewModel.addTodo(inputText, null)
-            inputText = ""}) {
-                Text(text = "Add")
-            }
-        }
-        todoList?.let {
-            LazyColumn(modifier = Modifier.padding(start = 5.dp, end = 5.dp, top = 5.dp),
-                content = {
-                    itemsIndexed(it) { index: Int, item: ToDoCard ->
-                        CardItem(item = item)
-                    }
+        Column(
+            modifier = Modifier.padding(top = 10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row() {
+                OutlinedTextField(value = inputText, onValueChange = {
+                    inputText = it
+                })
+                Button(onClick = {
+                    toDoViewModel.addTodo(inputText, null)
+                    inputText = ""
+                }) {
+                    Text(text = "Add")
                 }
-            )
-        }?: Text(text = "Нет дел!")
+            }
+            todoList?.let {
+                LazyColumn(modifier = Modifier.padding(start = 15.dp, end = 15.dp, top = 5.dp),
+                    content = {
+                        itemsIndexed(it) { index: Int, item: ToDoCard ->
+                            CardItem(item = item)
+                        }
+                    }
+                )
+            } ?: Text(text = "Нет дел!")
+        }
+        RoundAddButton()
     }
 }
 
@@ -104,7 +118,7 @@ fun CardItem(item: ToDoCard) {
                 )
 
                 Text(
-                    text = item.description?: "",
+                    text = item.description ?: "",
                     modifier = Modifier.padding(start = 10.dp),
                     color = Color.LightGray
                 )
@@ -117,7 +131,7 @@ fun CardItem(item: ToDoCard) {
                     color = Color.LightGray
                 )
             }
-            IconButton(onClick = {  }) {
+            IconButton(onClick = { }) {
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_delete_outline_24),
                     contentDescription = null
@@ -129,4 +143,19 @@ fun CardItem(item: ToDoCard) {
 
     }
 
+}
+
+@Preview
+@Composable
+fun RoundAddButton() {
+
+    IconButton(onClick = {  },
+        modifier = Modifier
+
+            .clip(CircleShape)
+            .size(50.dp)
+            .background(color = MaterialTheme.colorScheme.primary)) {
+        Icon(painter = painterResource(id = R.drawable.baseline_add_24), contentDescription = null)
+
+    }
 }
