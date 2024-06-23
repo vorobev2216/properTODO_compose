@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -41,11 +42,13 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStore
 import kotlinx.serialization.Serializable
 
 
 @Composable
-fun ToDoPage(toDoViewModel: ToDoViewModel) {
+fun ToDoPage(toDoViewModel: ToDoViewModel, navViewModel: NavViewModel) {
     val todoList by toDoViewModel.todoList.observeAsState()
     var inputText by remember {
         mutableStateOf("")
@@ -66,10 +69,10 @@ fun ToDoPage(toDoViewModel: ToDoViewModel) {
         ) {
             Row() {
                 OutlinedTextField(value = inputText, onValueChange = {
-                    inputText = it
+                    inputText = navViewModel.inputText.value.toString()
                 })
                 Button(onClick = {
-                    toDoViewModel.addTodo(inputText, null)
+                    toDoViewModel.addTodo(navViewModel.inputText.value.toString(), null)
                     inputText = ""
                 }) {
                     Text(text = "Add")
@@ -83,9 +86,8 @@ fun ToDoPage(toDoViewModel: ToDoViewModel) {
                         }
                     }
                 )
-            } ?: Text(text = "Нет дел!")
+            } ?: Text(text = "Нет дел!",modifier = Modifier.padding(top = 10.dp))
         }
-        RoundAddButton()
     }
 }
 

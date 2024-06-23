@@ -11,13 +11,3 @@ data class ToDoCard(
     val time: Date
 )
 
-
-fun getToDo(): List<ToDoCard> {
-    return listOf<ToDoCard>(
-        ToDoCard(1, "firstr", "qhirwuehqow", Date.from(Instant.now())),
-        ToDoCard(2, "firstr", "qhirwuehqow", Date.from(Instant.now())),
-        ToDoCard(3, "firstr", "qhirwuehqow", Date.from(Instant.now())),
-        ToDoCard(4, "firstr", "qhirwuehqow", Date.from(Instant.now())),
-        ToDoCard(5, "firstr", "qhirwuehqow", Date.from(Instant.now())),
-    )
-}

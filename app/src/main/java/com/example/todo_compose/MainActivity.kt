@@ -13,17 +13,26 @@ import androidx.compose.foundation.layout.Column
 
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,6 +48,8 @@ import kotlinx.serialization.Serializable
 
 class MainActivity : ComponentActivity() {
     private val NavViewModel by viewModels<NavViewModel>()
+
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val toDoViewModel = ViewModelProvider(this)[ToDoViewModel::class.java]
@@ -58,20 +69,37 @@ class MainActivity : ComponentActivity() {
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Top
                             ) {
-                                ToDoPage(toDoViewModel)
+                                ToDoPage(toDoViewModel, NavViewModel)
                             }
 
+                            val sheetState = rememberModalBottomSheetState()
+                            var isSheetOpen by remember {
+                                mutableStateOf(false)
+                            }
+                            if (isSheetOpen) {
+
+                                ModalBottomSheet(
+                                    onDismissRequest = { isSheetOpen = false },
+                                    sheetState = sheetState, modifier = Modifier.wrapContentHeight().imePadding()
+                                ) {
+                                    BottomSheetContent()
+                                }
+                            }
 
                             IconButton(
-                                onClick = { navController.navigate(ScreenB) },
+                                onClick = { isSheetOpen = true },
                                 modifier = Modifier
                                     .align(Alignment.BottomCenter)
                                     .padding(bottom = 50.dp)
                                     .clip(CircleShape)
-                                    .size(50.dp)
+                                    .size(65.dp)
                                     .background(color = MaterialTheme.colorScheme.primary)
                             ) {
-                                Icon(painter = painterResource(id = R.drawable.baseline_add_24), contentDescription =  "Add")
+                                Icon(
+                                    painter = painterResource(id = R.drawable.baseline_add_24),
+                                    modifier = Modifier.size(30.dp),
+                                    contentDescription = "Add"
+                                )
                             }
                         }
 
@@ -94,3 +122,4 @@ object ScreenA
 
 @Serializable
 object ScreenB
+
